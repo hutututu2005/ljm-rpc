@@ -28,7 +28,7 @@ public class ZKServiceCenter implements ServiceCenter {
     private CuratorFramework client;
     //zookeeper根路径节点
     private static final String ROOT_PATH = "MyRPC";
-    private static final String RETRY = "CanRetry";
+    private static final String RETRY = "CanRetry";//重试白名单
     //serviceCache
     private ServiceCache cache;
 
@@ -36,10 +36,10 @@ public class ZKServiceCenter implements ServiceCenter {
 
     //负责zookeeper客户端的初始化，并与zookeeper服务端进行连接
     public ZKServiceCenter() throws InterruptedException {
-        // 指定时间重试
+        // 指定指数回退重试策略，用于在连接失败时，进行自动重试
         RetryPolicy policy = new ExponentialBackoffRetry(1000, 3);
-        // zookeeper的地址固定，不管是服务提供者还是，消费者都要与之建立连接
-        // sessionTimeoutMs 与 zoo.cfg中的tickTime 有关系，
+        // zookeeper的地址固定，不管是服务提供者，还是消费者都要与之建立连接
+        // sessionTimeoutMs 会话超时时间，单位毫秒
         // zk还会根据minSessionTimeout与maxSessionTimeout两个参数重新调整最后的超时值。默认分别为tickTime 的2倍和20倍
         // 使用心跳监听状态
         this.client = CuratorFrameworkFactory.builder().connectString("127.0.0.1:2181")
@@ -63,7 +63,7 @@ public class ZKServiceCenter implements ServiceCenter {
             List<String> addressList = cache.getServiceListFromCache(serviceName);
             //如果找不到，再去zookeeper中找
             if (CollectionUtils.isEmpty(addressList)) {
-                addressList = client.getChildren().forPath("/" + serviceName);
+                addressList = client.getChildren().forPath("/" + serviceName);//不存在返回空列表
                 // 如果本地缓存中没有该服务名的地址列表，则添加
                 List<String> cachedAddresses = cache.getServiceListFromCache(serviceName);
                 if (cachedAddresses == null || cachedAddresses.isEmpty()) {
@@ -81,10 +81,12 @@ public class ZKServiceCenter implements ServiceCenter {
             String address = loadBalance.balance(addressList);
             return parseAddress(address);
         } catch (Exception e) {
-            log.error("服务发现失败，服务名：{}", serviceName, e);
+            log.error("服务发现失败，服务名：{}，异常：{}", serviceName, e);
         }
         return null;
     }
+    /*——————————————————————————————————————————————————————————————————————————*/
+    //todo：缓存一致性待改进
     //保证线程安全使用CopyOnWriteArraySet
     private Set<String> retryServiceCache = new CopyOnWriteArraySet<>();
     //写一个白名单缓存，优化性能
@@ -92,7 +94,7 @@ public class ZKServiceCenter implements ServiceCenter {
     public boolean checkRetry(InetSocketAddress serviceAddress, String methodSignature) {
         if (retryServiceCache.isEmpty()) {
             try {
-                CuratorFramework rootClient = client.usingNamespace(RETRY);
+                CuratorFramework rootClient = client.usingNamespace(RETRY);//连接白名单节点
                 List<String> retryableMethods = rootClient.getChildren().forPath("/" + getServiceAddress(serviceAddress));
                 retryServiceCache.addAll(retryableMethods);
             } catch (Exception e) {
@@ -101,7 +103,7 @@ public class ZKServiceCenter implements ServiceCenter {
         }
         return retryServiceCache.contains(methodSignature);
     }
-
+    /*——————————————————————————————————————————————————————————————————————————*/
     @Override
     public void close() {
         client.close();

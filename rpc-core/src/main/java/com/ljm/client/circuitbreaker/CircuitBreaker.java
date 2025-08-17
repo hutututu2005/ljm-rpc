@@ -7,6 +7,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author ljm
  * @description 熔断器
+ * 熔断器状态机
+ * 熔断器有三种状态：关闭、开启、半开启
+ * 在请求失败 N 次后在 X 时间内不再请求，进行熔断；然后再在 X 时间后恢复 M% 的请求，
+ * 如果 M% 的请求都成功则恢复正常，关闭熔断，否则再熔断 Y 时间，依此循环
  */
 @Slf4j
 public class CircuitBreaker {
@@ -41,7 +45,7 @@ public class CircuitBreaker {
                     state = CircuitBreakerState.HALF_OPEN;
                     resetCounts();
                     log.info("熔断已解除，进入半开启状态，允许请求通过");
-                    requestCount.incrementAndGet();
+                    //requestCount.incrementAndGet();
                     return true;
                 }
                 log.warn("熔断生效中，拒绝请求！");

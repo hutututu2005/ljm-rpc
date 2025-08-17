@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * @ClassName guavaRetry
  * @Description 重试策略
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:44
+ * @Author ljm
+ * @LastChangeDate 2025-7-3
  * @Version v5.0
  */
 @Slf4j

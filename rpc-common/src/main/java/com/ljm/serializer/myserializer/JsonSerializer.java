@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.ljm.message.RpcRequest;
 import com.ljm.message.RpcResponse;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -11,6 +12,7 @@ import com.ljm.message.RpcResponse;
  * @Description json序列化
  * @Author ljm
  */
+@Slf4j
 public class JsonSerializer implements Serializer {
     @Override
     public byte[] serialize(Object obj) {
@@ -57,7 +59,7 @@ public class JsonSerializer implements Serializer {
                 obj = response;
                 break;
             default:
-                System.out.println("暂时不支持此种消息");
+                log.error("暂时不支持此种消息:{}",messageType);
                 throw new RuntimeException();
         }
         return obj;

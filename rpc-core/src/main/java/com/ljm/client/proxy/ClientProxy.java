@@ -20,8 +20,8 @@ import java.net.InetSocketAddress;
 /**
  * @ClassName ClientProxy
  * @Description 动态代理
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:14
+ * @Author ljm
+ * @LastChangeDate 2025-7-2
  * @Version v5.0
  */
 @Slf4j
@@ -56,7 +56,7 @@ public class ClientProxy implements InvocationHandler {
         }
         //数据传输
         RpcResponse response;
-        //后续添加逻辑：为保持幂等性，只对白名单上的服务进行重试
+        //为保持幂等性，只对白名单上的服务进行重试
         // 如果启用重试机制，先检查是否需要重试
         String methodSignature = getMethodSignature(request.getInterfaceName(), method);
         log.info("方法签名: " + methodSignature);

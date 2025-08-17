@@ -12,8 +12,8 @@ import org.apache.curator.framework.recipes.cache.CuratorCacheListener;
 /**
  * @ClassName watchZK
  * @Description 节点监听
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:37
+ * @Author ljm
+ * @LastChangeDate 2025-7-02 10:37
  * @Version v5.0
  */
 @Slf4j
@@ -35,7 +35,9 @@ public class watchZK {
      * @param path
      */
     public void watchToUpdate(String path) throws InterruptedException {
+        //curatorCache是curaotr提供的一个用于监听节点变化的api
         CuratorCache curatorCache = CuratorCache.build(client, "/");
+        //注册监听器
         curatorCache.listenable().addListener(new CuratorCacheListener() {
             @Override
             public void event(Type type, ChildData childData, ChildData childData1) {
@@ -46,7 +48,8 @@ public class watchZK {
                 // 删除节点时：节点被删除，不存在 更新后节点 ，所以第三个参数为 null
                 // 节点创建时没有赋予值 create /curator/app1 只创建节点，在这种情况下，更新前节点的 data 为 null，获取不到更新前节点的数据
                 switch (type.name()) {
-                    case "NODE_CREATED": // 监听器第一次执行时节点存在也会触发次事件
+                    case "NODE_CREATED": // 监听器第一次执行时节点存在也会触发此事件
+                        // /MyRPC/UserService/127.0.0.1:8888
                         String[] pathList = pasrePath(childData1);
                         if (pathList.length <= 2) break;
                         else {
@@ -90,6 +93,10 @@ public class watchZK {
 
     //解析节点对应地址
     public String[] pasrePath(ChildData childData) {
+        if(childData==null||childData.getPath()==null){
+            log.warn("无效节点数据");
+            return new String[0];//避免空指针
+        }
         //获取更新的节点的路径
         String path = new String(childData.getPath());
         log.info("节点路径:{}",path);

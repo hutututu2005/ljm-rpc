@@ -11,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @ClassName ProviderExample
  * @Description 测试服务端
- * @Author Tong
- * @LastChangeDate 2024-12-05 0:34
+ * @Author ljm
+ * @LastChangeDate 2025-7-01
  * @Version v5.0
  */
 @Slf4j

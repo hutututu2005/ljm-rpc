@@ -18,8 +18,8 @@ import java.util.List;
 /**
  * @ClassName ZKServiceRegister
  * @Description zk服务注册中心
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:28
+ * @Author ljm
+ * @LastChangeDate 2025-07-01 11:31
  * @Version v5.0
  */
 @Slf4j
@@ -45,12 +45,14 @@ public class ZKServiceRegister implements ServiceRegister {
         String serviceName = clazz.getName();
         try {
             if (client.checkExists().forPath("/" + serviceName) == null) {
+                //永久节点，服务提供者下线时，不会自动删除
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/" + serviceName);
                 log.info("服务节点 {} 创建成功", "/" + serviceName);
             }
 
             String path = "/" + serviceName + "/" + getServiceAddress(serviceAddress);
             if (client.checkExists().forPath(path) == null) {
+                //临时节点，服务提供者下线时，会自动删除
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
                 log.info("服务地址 {} 注册成功", path);
             } else {
@@ -62,6 +64,7 @@ public class ZKServiceRegister implements ServiceRegister {
             log.info("可重试的方法: {}", retryableMethods);
             CuratorFramework rootClient = client.usingNamespace(RETRY);
             for (String retryableMethod : retryableMethods) {
+                //临时节点，服务提供者下线时，会自动删除
                 rootClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath("/" + getServiceAddress(serviceAddress) + "/" + retryableMethod);
             }
         } catch (Exception e) {

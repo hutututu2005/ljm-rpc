@@ -9,7 +9,6 @@ public interface UserService {
     @Retryable
     User getUserByUserId(Integer id);
 
-    // 新增
-    @Retryable
+    // 新增 不是幂等性操作，不支持重试
     Integer insertUserId(User user);
 }

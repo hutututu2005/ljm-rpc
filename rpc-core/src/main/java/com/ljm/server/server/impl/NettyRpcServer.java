@@ -13,8 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @ClassName NettyRpcServer
  * @Description Netty服务端
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:25
+ * @Author ljm
+ * @LastChangeDate 2025-07-01 10:40
  * @Version v5.0
  */
 @Slf4j
@@ -28,6 +28,7 @@ public class NettyRpcServer implements RpcServer {
 
     @Override
     public void start(int port) {
+        //分别用于处理连接请求和处理 I/O 操作
         NioEventLoopGroup bossGroup = new NioEventLoopGroup();
         NioEventLoopGroup workGroup = new NioEventLoopGroup();
         log.info("Netty服务端启动了");

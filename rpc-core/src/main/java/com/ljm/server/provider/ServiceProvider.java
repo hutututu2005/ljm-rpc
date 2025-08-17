@@ -13,11 +13,12 @@ import java.util.Map;
 /**
  * @ClassName ServiceProvider
  * @Description 本地注册中心
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:21
+ * @Author ljm
+ * @LastChangeDate 2025-7-01
  * @Version v5.0
  */
 public class ServiceProvider {
+    //本地服务映射表  服务接口全限定类名->服务实现类实例
     private Map<String, Object> interfaceProvider;
 
     private int port;

@@ -22,7 +22,7 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
 
 
     @Override
-    protected void initChannel(SocketChannel ch) throws Exception {
+    protected void initChannel(SocketChannel ch) throws Exception {//初始化每一个socketchannel
         ChannelPipeline pipeline = ch.pipeline();
 
         // 使用自定义的编码器和解码器
@@ -32,6 +32,7 @@ public class NettyClientInitializer extends ChannelInitializer<SocketChannel> {
             pipeline.addLast(new MyDecoder());
             pipeline.addLast(new NettyClientHandler());
             //客户端超过10秒没有写数据，则发送心跳包
+            //三个参数：读事件，写事件，读写事件
             pipeline.addLast(new IdleStateHandler(0,10,0, TimeUnit.SECONDS));
             pipeline.addLast(new HeartbeatHandler());
 

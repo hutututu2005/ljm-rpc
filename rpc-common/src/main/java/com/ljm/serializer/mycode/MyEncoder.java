@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @AllArgsConstructor
-public class MyEncoder extends MessageToByteEncoder {
+public class MyEncoder extends MessageToByteEncoder {//MessageToByteEncoder是netty专门设计用来实现编码器得抽象类，可以帮助开发者将Java对象编码成字节数据。
     private Serializer serializer;
 
     @Override
@@ -31,14 +31,14 @@ public class MyEncoder extends MessageToByteEncoder {
             out.writeShort(MessageType.RESPONSE.getCode());
         } else {
             log.error("Unknown message type: {}", msg.getClass());
-            throw new IllegalArgumentException("Unknown message type: " + msg.getClass());
+            throw new IllegalArgumentException("未知消息类型: " + msg.getClass());
         }
         //2.写入序列化方式
         out.writeShort(serializer.getType());
         //得到序列化数组
         byte[] serializeBytes = serializer.serialize(msg);
         if (serializeBytes == null || serializeBytes.length == 0) {
-            throw new IllegalArgumentException("Serialized message is empty");
+            throw new IllegalArgumentException("被序列化的消息为空");
         }
         //3.写入长度
         out.writeInt(serializeBytes.length);

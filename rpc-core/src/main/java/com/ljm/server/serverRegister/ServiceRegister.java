@@ -6,8 +6,8 @@ import java.net.InetSocketAddress;
 /**
  * @InterfaceName ServiceRegister
  * @Description 服务注册接口
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:27
+ * @Author ljm
+ * @LastChangeDate 2025-07-01 10:40
  * @Version v5.0
  */
 

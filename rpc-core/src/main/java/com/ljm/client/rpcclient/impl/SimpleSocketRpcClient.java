@@ -14,9 +14,9 @@ import java.net.UnknownHostException;
 /**
  * @ClassName SimpleSocketRpcClient
  * @Description 实现简单客户都
- * @Author Tong
+ * @Author ljm
  * @LastChangeDate 2024-12-02 10:12
- * @Version v5.0
+ * @Version v1.0
  */
 public class SimpleSocketRpcClient implements RpcClient {
     private String host;

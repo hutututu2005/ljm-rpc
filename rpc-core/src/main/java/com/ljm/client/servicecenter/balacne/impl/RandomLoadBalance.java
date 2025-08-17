@@ -11,8 +11,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @ClassName RandomLoadBalance
  * @Description 随机法
- * @Author Tong
- * @LastChangeDate 2024-12-02 10:40
+ * @Author ljm
+ * @LastChangeDate 2025-7-2 10:40
  * @Version v5.0
  */
 @Slf4j

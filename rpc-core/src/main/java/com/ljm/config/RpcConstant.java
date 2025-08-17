@@ -4,8 +4,8 @@ package com.ljm.config;
 /**
  * @InterfaceName RpcConstants
  * @Description
- * @Author Tong
- * @LastChangeDate 2024-12-05 11:17
+ * @Author ljm
+ * @LastChangeDate 2025-07-01 10:40
  * @Version v5.0
  */
 

@@ -57,14 +57,14 @@ public class ConsumerTest {
             });
         }
 
-       /* User user = proxy.getUserByUserId(1);
+        /*User user = proxy.getUserByUserId(1);
         System.out.println("从服务端得到的user="+user.toString());
 
         User u= User.builder().id(100).userName("wxx").gender(true).build();
         Integer id = proxy.insertUserId(u);
         System.out.println("向服务端插入user的id"+id);*/
 
-
+        Thread.sleep(10000);
         // Gracefully shutdown the executor service
         executorService.shutdown();
         //优雅关闭，释放资源

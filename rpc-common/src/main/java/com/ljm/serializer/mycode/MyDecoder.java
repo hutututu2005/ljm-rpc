@@ -18,7 +18,7 @@ import java.util.List;
  * @Author ljm
  */
 @Slf4j
-public class MyDecoder extends ByteToMessageDecoder {
+public class MyDecoder extends ByteToMessageDecoder {//负责传入的字节流解码为业务对象，并将解码后的对象添加到out中，供下一个handler处理
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf in, List<Object> out) throws Exception {
         //检查可读字节数

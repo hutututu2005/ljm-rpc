@@ -10,36 +10,46 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class TokenBucketRateLimitImpl implements RateLimit {
-   //临牌产生速率 每xx ms生成一个
+    // 令牌产生速率（单位：ms）
     private final int rate;
-    //桶容量
+    // 桶容量
     private final int capacity;
-    //当前令牌数量 使用volatile保证可见性
-    private volatile int currentTokens;
-    //上一次令牌生成时间
+    // 当前桶容量
+    private volatile int curCapacity;
+    // 上次请求时间戳
     private volatile long lastTimestamp;
 
     public TokenBucketRateLimitImpl(int rate, int capacity) {
         this.rate = rate;
         this.capacity = capacity;
-        this.currentTokens = capacity;
+        this.curCapacity = capacity;
         this.lastTimestamp = System.currentTimeMillis();
     }
+
     @Override
     public boolean getToken() {
+        // 优化：同步仅限于关键部分，减少锁竞争
         synchronized (this) {
-            //计算当前令牌
-            long currentTimestamp = System.currentTimeMillis();
-            int newTokens =(int)(currentTimestamp-lastTimestamp)/rate;
-            //更新桶中的令牌
-            currentTokens = Math.min(currentTokens + newTokens, capacity);
-            //更新令牌生成时间
-            lastTimestamp = currentTimestamp;
-            if(currentTokens >0){
-                currentTokens--;
+            // 如果当前桶还有剩余，就直接返回
+            if (curCapacity > 0) {
+                curCapacity--;
                 return true;
             }
-            return false;
+
+            long currentTimestamp = System.currentTimeMillis();
+            // 如果距离上一次请求的时间大于 RATE 的时间间隔
+            if (currentTimestamp - lastTimestamp >= rate) {
+                // 计算这段时间内生成的令牌数量
+                int generatedTokens = (int) ((currentTimestamp - lastTimestamp) / rate);
+                if (generatedTokens > 1) {
+                    // 只添加剩余令牌，确保不会超过桶的容量
+                    curCapacity = Math.min(capacity, curCapacity + generatedTokens - 1);
+                }
+                // 更新时间戳
+                lastTimestamp = currentTimestamp;
+                return true;
+            }
+            return false;  // 如果无法获取令牌，返回 false
         }
     }
 }

@@ -53,7 +53,7 @@ public class NettyRpcServerHandler extends SimpleChannelInboundHandler<RpcReques
         //得到服务名
         String interfaceName = rpcRequest.getInterfaceName();
 
-        //接口限流降级
+        //接口限流
         RateLimit rateLimit = serviceProvider.getRateLimitProvider().getRateLimit(interfaceName);
         if (!rateLimit.getToken()) {
             //如果获取令牌失败，进行限流降级，快速返回结果
@@ -63,7 +63,7 @@ public class NettyRpcServerHandler extends SimpleChannelInboundHandler<RpcReques
 
         //得到服务端相应服务实现类
         Object service = serviceProvider.getService(interfaceName);
-        //反射调用方法
+        //反射调用方法   动态方法调用
         Method method;
         try {
             method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamsType());
